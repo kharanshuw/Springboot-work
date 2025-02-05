@@ -1,0 +1,127 @@
+## Class vs Record: Difference between class and record in Java
+
+In Java, `class` and `record` are two ways to define data structures, but they have different purposes and characteristics. Here's a breakdown of the differences between them:
+
+### Class:
+
+- **Purpose:** A class is a blueprint for creating objects that can have fields, methods, constructors, and other members.
+- **Usage:** Classes are used when you need a full-fledged object with behavior (methods) and state (fields).
+- **Flexibility:** Classes offer complete flexibility in terms of defining behavior, inheritance, and encapsulation.
+- **Syntax Example:**
+    
+    ```java
+    public class Person {
+        private String name;
+        private int age;
+    
+        public Person(String name, int age) {
+            this.name = name;
+            this.age = age;
+        }
+    
+        public String getName() {
+            return name;
+        }
+    
+        public void setName(String name) {
+            this.name = name;
+        }
+    
+        public int getAge() {
+            return age;
+        }
+    
+        public void setAge(int age) {
+            this.age = age;
+        }
+    
+        @Override
+        public String toString() {
+            return "Person{name='" + name + "', age=" + age + "}";
+        }
+    }
+    
+    ```
+    
+
+### Record:
+
+- **Purpose:** A record is a special kind of class introduced in Java 14 (as a preview) and officially in Java 16 to represent simple data-carrying classes.
+- **Usage:** Records are used when the primary purpose of the class is to hold immutable data without complex behavior.
+- **Simplicity:** Records automatically provide implementations for `equals()`, `hashCode()`, and `toString()` methods, as well as a compact constructor.
+- **Immutability:** Fields in a record are implicitly `final`, meaning they cannot be changed once set.
+- **Syntax Example:**
+    
+    ```java
+    public record Person(String name, int age) {
+        // Custom methods can still be added if needed
+    }
+    
+    ```
+    
+
+### Key Differences:
+
+- **Boilerplate Code:**
+    - **Class:** Requires explicit definition of constructors, getters, setters, `equals()`, `hashCode()`, and `toString()` methods.
+    - **Record:** Automatically provides these methods, reducing boilerplate code.
+- **Immutability:**
+    - **Class:** Fields are mutable unless explicitly marked as `final`.
+    - **Record:** Fields are implicitly `final` and thus immutable.
+- **Use Case:**
+    - **Class:** Use when you need a rich data model with behavior and mutable state.
+    - **Record:** Use for simple, immutable data carriers with minimal behavior.
+
+### Example Comparison:
+
+### Class Implementation:
+
+```java
+public class Person {
+    private String name;
+    private int age;
+
+    public Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Person person = (Person) o;
+        return age == person.age && Objects.equals(name, person.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, age);
+    }
+
+    @Override
+    public String toString() {
+        return "Person{name='" + name + "', age=" + age + "}";
+    }
+}
+
+```
+
+### Record Implementation:
+
+```java
+public record Person(String name, int age) {
+    // Additional methods can be added if needed
+}
+
+```
+
+In summary, use `class` when you need a complex object with behavior and mutable state. Use `record` when you need a simple, immutable data carrier with minimal behavior and reduced boilerplate code. Let me know if you need more details or have any other questions!
