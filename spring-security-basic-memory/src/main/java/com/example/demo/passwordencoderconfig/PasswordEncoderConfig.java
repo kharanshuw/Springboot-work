@@ -11,7 +11,6 @@ public class PasswordEncoderConfig {
     /**
      * This method is used to define a bean for the PasswordEncoder interface, which
      * is used to encode and decode passwords.
-     * <p>
      * In this method, you can create a new instance of the PasswordEncoder
      * interface and configure it to use a specific password encoding algorithm.
      *
