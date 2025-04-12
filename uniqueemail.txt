@@ -1,0 +1,91 @@
+
+
+Here's a step-by-step solution to handle duplicate email addresses during user registration in a Spring Boot web project:
+
+**Step 1: Create a unique constraint on the email column in the MySQL database**
+
+In your MySQL database, add a unique constraint on the email column in the users table. This will prevent duplicate email addresses from being inserted into the database.
+
+```sql
+ALTER TABLE users ADD CONSTRAINT uc_email UNIQUE (email);
+```
+
+**Step 2: Create a custom validation annotation**
+
+Create a custom validation annotation `@UniqueEmail` to validate the email address during registration.
+
+```java
+@Constraint(validatedBy = UniqueEmailValidator.class)
+@Target({ElementType.FIELD, ElementType.PARAMETER})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface UniqueEmail {
+    String message() default "Email address already exists";
+    Class<?>[] groups() default {};
+    Class<? extends Payload>[] payload() default {};
+}
+```
+
+**Step 3: Create a validator class**
+
+Create a validator class `UniqueEmailValidator` to check if the email address already exists in the database.
+
+```java
+public class UniqueEmailValidator implements ConstraintValidator<UniqueEmail, String> {
+    
+    @Autowired
+    private UserRepository userRepository;
+    
+    @Override
+    public void initialize(UniqueEmail annotation) {
+    }
+    
+    @Override
+    public boolean isValid(String email, ConstraintValidatorContext context) {
+        User user = userRepository.findByEmail(email);
+        return user == null;
+    }
+}
+```
+
+**Step 4: Add the custom validation annotation to the email field**
+
+Add the `@UniqueEmail` annotation to the email field in your user registration form.
+
+```java
+public class UserRegistrationForm {
+    
+    @UniqueEmail
+    private String email;
+    
+    // getters and setters
+}
+```
+
+**Step 5: Handle the validation error**
+
+In your controller, handle the validation error by catching the `ConstraintViolationException` and returning a custom error message.
+
+```java
+@PostMapping("/register")
+public String registerUser(@Valid UserRegistrationForm form, BindingResult bindingResult) {
+    if (bindingResult.hasErrors()) {
+        return "registration_form";
+    }
+    // save the user
+    return "redirect:/login";
+}
+```
+
+**Step 6: Display the error message**
+
+In your registration form, display the error message using the `errors` object.
+
+```html
+<form:form modelAttribute="userRegistrationForm">
+    <form:errors path="email" />
+    <form:input path="email" />
+    <!-- other fields -->
+</form:form>
+```
+
+That's it! With these steps, you should be able to handle duplicate email addresses during user registration in your Spring Boot web project.
