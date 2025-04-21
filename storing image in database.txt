@@ -1,0 +1,136 @@
+
+
+**Storing Images in MySQL Database using Spring Boot**
+
+Here are the steps to store an image in a MySQL database using Spring Boot:
+
+**Step 1: Add dependencies to your `pom.xml` file (if you're using Maven) or your `build.gradle` file (if you're using Gradle)**
+
+```xml
+<!-- Maven -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-jpa</artifactId>
+</dependency>
+<dependency>
+    <groupId>mysql</groupId>
+    <artifactId>mysql-connector-java</artifactId>
+</dependency>
+```
+
+```groovy
+// Gradle
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'mysql:mysql-connector-java'
+}
+```
+
+**Step 2: Create a Entity class to represent the image**
+
+```java
+@Entity
+public class Image {
+  
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+  
+    @Column(name = "image_name")
+    private String imageName;
+  
+    @Column(name = "image_data")
+    private byte[] imageData;
+  
+    // Getters and Setters
+    public Long getId() {
+        return id;
+    }
+  
+    public void setId(Long id) {
+        this.id = id;
+    }
+  
+    public String getImageName() {
+        return imageName;
+    }
+  
+    public void setImageName(String imageName) {
+        this.imageName = imageName;
+    }
+  
+    public byte[] getImageData() {
+        return imageData;
+    }
+  
+    public void setImageData(byte[] imageData) {
+        this.imageData = imageData;
+    }
+}
+```
+
+**Step 3: Create a Repository interface to interact with the database**
+
+```java
+public interface ImageRepository extends JpaRepository<Image, Long> {
+  
+}
+```
+
+**Step 4: Create a Service class to handle the image upload**
+
+```java
+@Service
+public class ImageService {
+  
+    @Autowired
+    private ImageRepository imageRepository;
+  
+    public void saveImage(MultipartFile file) {
+        Image image = new Image();
+        image.setImageName(file.getOriginalFilename());
+        try {
+            image.setImageData(file.getBytes());
+        } catch (IOException e) {
+            // Handle exception
+        }
+        imageRepository.save(image);
+    }
+}
+```
+
+**Step 5: Create a Controller class to handle the image upload request**
+
+```java
+@RestController
+@RequestMapping("/api/images")
+public class ImageController {
+  
+    @Autowired
+    private ImageService imageService;
+  
+    @PostMapping("/upload")
+    public String uploadImage(@RequestParam("image") MultipartFile file) {
+        imageService.saveImage(file);
+        return "Image uploaded successfully";
+    }
+}
+```
+
+**Step 6: Update your MySQL database configuration**
+
+Make sure you have the correct database configuration in your `application.properties` file:
+
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/your_database
+spring.datasource.username=your_username
+spring.datasource.password=your_password
+spring.jpa.hibernate.ddl-auto=update
+```
+
+That's it! Now you should be able to upload an image using a form and store it in your MySQL database using Spring Boot.
