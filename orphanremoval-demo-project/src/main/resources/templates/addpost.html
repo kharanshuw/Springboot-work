@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>addpost</title>
+</head>
+
+<body>
+    <div>
+        <form method="post" data-th-action="@{'/addpost'}" data-th-object="${post}">
+
+ 
+            title: <input type="text" placeholder="enter post title "  data-th-field="*{title}" >
+
+            <button type="submit">submit</button>
+
+        </form>
+    </div>
+</body>
+
+</html>

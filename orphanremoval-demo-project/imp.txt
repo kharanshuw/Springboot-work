@@ -1,0 +1,4 @@
+http://localhost:8080/addpost
+
+
+http://localhost:8080/allpost
