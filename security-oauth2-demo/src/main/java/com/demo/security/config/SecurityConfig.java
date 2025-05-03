@@ -1,6 +1,7 @@
 package com.demo.security.config;
 
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -11,15 +12,26 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
+
+    private OauthSuccessHandler oauthSuccessHandler;
+
+
+    @Autowired
+    public SecurityConfig(OauthSuccessHandler oauthSuccessHandler) {
+        this.oauthSuccessHandler = oauthSuccessHandler;
+    }
+
+
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 
-        httpSecurity.authorizeHttpRequests(auth -> 
-        {
+        httpSecurity.authorizeHttpRequests(auth -> {
             auth.requestMatchers("/login").permitAll();
+            auth.requestMatchers("/profile").permitAll();
             auth.anyRequest().authenticated();
         }
-       
+
         );
 
 
@@ -44,8 +56,10 @@ public class SecurityConfig {
         });
 
         httpSecurity.oauth2Login(oauth -> {
-            oauth.loginPage("/oauthlogin")
-            .defaultSuccessUrl("/user/dashboard");
+            oauth.loginPage("/oauthlogin");
+
+
+            oauth.successHandler(oauthSuccessHandler);
         });
 
 
